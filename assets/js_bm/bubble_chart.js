@@ -204,16 +204,17 @@ var whatsappCenters = { // Center locations of the bubbles.
  
 var tiktokCenters = { // Center locations of the bubbles.
     1: { x: 300, y: height / 2 },
-    2: { x: 420, y: height / 2 },
-    3: { x: 550, y: height / 2 }
+    2: { x: 500, y: height / 1.8 },
+    3: { x: 800, y: height / 2 }
     
   };
 
   var tiktokTitleX = { // X locations of the year titles.
     
     'Vertrauen': 110,
-    'Vertrauen eher nicht': 320,
-    'Weiss nicht': 600
+    'Vertrauen eher nicht': 525,
+    'Weiss nicht': 950
+
   
     
   };
