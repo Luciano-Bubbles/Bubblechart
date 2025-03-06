@@ -168,38 +168,39 @@ var agecatCenters = { // Center locations of the bubbles.
        // Fünfter Button: Sorgenbarometer
  
 var sorgenCenters = { // Center locations of the bubbles.
-    1: { x: 200, y: height / 2 },
-    2: { x: 400, y: height / 2 },
-    3: { x: 600, y: height / 2 },
-    4: { x: 800, y: height / 2 }
+    1: { x: 300, y: height / 2 },
+    2: { x: 420, y: height / 2 },
+    3: { x: 550, y: height / 2 },
+    4: { x: 700, y: height / 2 }
     
   };
 
   var sorgenTitleX = { // X locations of the year titles.
     
-    'Mache mir sorgen um meine Daten': 200,
-    'Mache mir eher sorgen': 400,
+    'Mache mir sorgen um meine Daten': 110,
+    'Mache mir eher sorgen': 320,
     'Mache mir eher keine sorgen': 600,
-    'Mache mir keine Sorgen um meine Daten': 800
+    'Mache mir keine Sorgen um meine Daten': 900
     
   };
   
          // Sechster Button: Whatsapp Nutzung
  
 var whatsappCenters = { // Center locations of the bubbles.
-    1: { x: 200, y: height / 2 },
-    2: { x: 400, y: height / 2 }
+    1: { x: 390, y: height / 1.90 },
+    2: { x: 730, y: height / 2 }
     
     
   };
 
   var whatsappTitleX = { // X locations of the year titles.
     
-    'Nutzt Whatsapp': 200,
-    'Nutzt kein Whatsapp': 400
+    'Nutzt Whatsapp': 370,
+    'Nutzt kein Whatsapp': 885
     
     
   };
+
 //* ------------------------------------------------------------------
 //
 // Teil 4 - Datenmanipulation (csv into JS)
@@ -266,6 +267,7 @@ var whatsappCenters = { // Center locations of the bubbles.
         sex: d.geschlecht,
           
        sorgen: d.sorgenbarometer,
+        whatsapp: d.nutztwhatsapp,
         
         x: Math.random() * 900,
         y: Math.random() * 800
@@ -363,6 +365,7 @@ var whatsappCenters = { // Center locations of the bubbles.
     hideSex();
     hideScreentime();
     hideSorgen();
+    hideWhatsapp();
     
 
     
@@ -407,6 +410,7 @@ Die Positionierung basiert auf dem alpha Parameter des force layouts und wird kl
     hideSex();
     hideScreentime();
    hideSorgen();
+   hideWhatsapp();
 
 
     force.on('tick', function (e) {
@@ -456,6 +460,7 @@ function moveToYear(alpha) {
     hideSex();
     hideScreentime();
    hideSorgen();
+   hideWhatsapp();
 
 
     force.on('tick', function (e) {
@@ -505,6 +510,7 @@ function moveToAgecat(alpha) {
     hideAgecat();
     hideScreentime();
     hideSorgen();
+    hideWhatsapp();
 
 
     force.on('tick', function (e) {
@@ -554,6 +560,7 @@ function moveToAgecat(alpha) {
     hideSex();
     hideAgecat();
     hideSorgen();
+    hideWhatsapp();
 
 
     force.on('tick', function (e) {
@@ -605,6 +612,7 @@ function moveToAgecat(alpha) {
     hideSex();
     hideAgecat();
     hideScreentime();
+    hideWhatsapp();
 
 
     force.on('tick', function (e) {
@@ -640,7 +648,57 @@ function moveToAgecat(alpha) {
       .attr('y', 65)
       .attr('text-anchor', 'middle')
       .text(function (d) { return d; });
+    }
+  //* ------------------------------------------------------------------
+//
+// Whatsapp
+//
+// -----------------------------------------------------------------*/
+ 
+ function splitBubblesintoWhatsapp() {
+    hideYear();
+    hideAgecat();
+    hideSex();
+    hideScreentime();
+   hideSorgen();
+   showWhatsapp();
+
+
+    force.on('tick', function (e) {
+      bubbles.each(moveToWhatsapp(e.alpha))
+        .attr('cx', function (d) { return d.x; })
+        .attr('cy', function (d) { return d.y; });
+    });
+
+    force.start();
+  }
+    
+function moveToWhatsapp(alpha) {
+    return function (d) {
+      var target = whatsappCenters[d.whatsapp];
+      d.x = d.x + (target.x - d.x) * damper * alpha * 1.1;
+      d.y = d.y + (target.y - d.y) * damper * alpha * 1.1;
+    };
+  }
+
+  function hideWhatsapp() {
+    svg.selectAll('.whatsapp').remove();
+  }
+
+  function showWhatsapp() {
+
+    var whatsappData = d3.keys(whatsappTitleX);
+    var whatsapp = svg.selectAll('.whatsapp')
+      .data(whatsappData);
+
+    whatsapp.enter().append('text')
+      .attr('class', 'whatsapp')
+      .attr('x', function (d) { return whatsappTitleX[d]; })
+      .attr('y', 30)
+      .attr('text-anchor', 'middle')
+      .text(function (d) { return d; });
     }    
+    
 
   
     
@@ -672,6 +730,8 @@ function moveToAgecat(alpha) {
       splitBubblesintoScreentime();
         } else if (displayName === 'sorgen') {
       splitBubblesintoSorgen();
+      } else if (displayName === 'whatsapp') {
+      splitBubblesintoWhatsapp();
     } else {
       groupBubbles();
     }
@@ -720,6 +780,9 @@ function moveToAgecat(alpha) {
                   '</span><br/>' +
                   '<span class="name">Ich mache mir Sorgen um meine Daten: </span><span class="value">' +
                   d.sorgen +
+                  '</span><br/>' +
+        '<span class="name">Ich nutze Whatsapp: </span><span class="value">' +
+                  d.whatsapp +
                   '</span><br/>' +
                   '<span class="name">"Umfragejahr": </span><span class="value">' +
                   d.year +
