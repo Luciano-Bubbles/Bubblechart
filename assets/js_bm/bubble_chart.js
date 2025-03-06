@@ -200,6 +200,23 @@ var whatsappCenters = { // Center locations of the bubbles.
     
     
   };
+         // Siebter Button: Tiktok vertrauen
+ 
+var tiktokCenters = { // Center locations of the bubbles.
+    1: { x: 300, y: height / 2 },
+    2: { x: 420, y: height / 2 },
+    3: { x: 550, y: height / 2 }
+    
+  };
+
+  var tiktokTitleX = { // X locations of the year titles.
+    
+    'Vertrauen': 110,
+    'Vertrauen eher nicht': 320,
+    'Weiss nicht': 600
+  
+    
+  };
 
 //* ------------------------------------------------------------------
 //
@@ -268,6 +285,7 @@ var whatsappCenters = { // Center locations of the bubbles.
           
        sorgen: d.sorgenbarometer,
         whatsapp: d.nutztwhatsapp,
+        tiktok: d.tiktokvertrauen,
         
         x: Math.random() * 900,
         y: Math.random() * 800
@@ -366,6 +384,7 @@ var whatsappCenters = { // Center locations of the bubbles.
     hideScreentime();
     hideSorgen();
     hideWhatsapp();
+    hideTiktok();
     
 
     
@@ -411,6 +430,7 @@ Die Positionierung basiert auf dem alpha Parameter des force layouts und wird kl
     hideScreentime();
    hideSorgen();
    hideWhatsapp();
+   hideTiktok();
 
 
     force.on('tick', function (e) {
@@ -461,6 +481,8 @@ function moveToYear(alpha) {
     hideScreentime();
    hideSorgen();
    hideWhatsapp();
+   hideTiktok();
+   
 
 
     force.on('tick', function (e) {
@@ -511,6 +533,7 @@ function moveToAgecat(alpha) {
     hideScreentime();
     hideSorgen();
     hideWhatsapp();
+    hideTiktok();
 
 
     force.on('tick', function (e) {
@@ -561,6 +584,7 @@ function moveToAgecat(alpha) {
     hideAgecat();
     hideSorgen();
     hideWhatsapp();
+    hideTiktok();
 
 
     force.on('tick', function (e) {
@@ -613,6 +637,7 @@ function moveToAgecat(alpha) {
     hideAgecat();
     hideScreentime();
     hideWhatsapp();
+    hideTiktok();
 
 
     force.on('tick', function (e) {
@@ -662,6 +687,7 @@ function moveToAgecat(alpha) {
     hideScreentime();
    hideSorgen();
    showWhatsapp();
+   hideTiktok();
 
 
     force.on('tick', function (e) {
@@ -697,7 +723,57 @@ function moveToWhatsapp(alpha) {
       .attr('y', 30)
       .attr('text-anchor', 'middle')
       .text(function (d) { return d; });
-    }    
+    }
+   //* ------------------------------------------------------------------
+//
+// Tiktok
+//
+// -----------------------------------------------------------------*/
+    
+  function splitBubblesintoTiktok() {
+    hideSorgen();
+    hideYear();
+    hideSex();
+    hideAgecat();
+    hideScreentime();
+    hideWhatsapp();
+    showTiktok();
+
+
+    force.on('tick', function (e) {
+      bubbles.each(moveToTiktok(e.alpha))
+        .attr('cx', function (d) { return d.x; })
+        .attr('cy', function (d) { return d.y; });
+    });
+
+    force.start();
+  }
+
+  function moveToTiktok(alpha) {
+    return function (d) {
+      var target = tiktokCenters[d.tiktok];
+      d.x = d.x + (target.x - d.x) * damper * alpha * 1.1;
+      d.y = d.y + (target.y - d.y) * damper * alpha * 1.1;
+    };
+  }
+
+  function hideTiktok() {
+    svg.selectAll('.tiktok').remove();
+  }
+
+  function showTiktok() {
+
+    var tiktokData = d3.keys(tiktokTitleX);
+    var tiktok = svg.selectAll('.tiktok')
+      .data(tiktokData);
+
+    tiktok.enter().append('text')
+      .attr('class', 'tiktok')
+      .attr('x', function (d) { return tiktokTitleX[d]; })
+      .attr('y', 65)
+      .attr('text-anchor', 'middle')
+      .text(function (d) { return d; });
+    }
     
 
   
@@ -732,6 +808,8 @@ function moveToWhatsapp(alpha) {
       splitBubblesintoSorgen();
       } else if (displayName === 'whatsapp') {
       splitBubblesintoWhatsapp();
+      } else if (displayName === 'tiktok') {
+      splitBubblesintoTiktok();
     } else {
       groupBubbles();
     }
@@ -762,7 +840,7 @@ function moveToWhatsapp(alpha) {
 
   var fillColor = d3.scale.ordinal()
     .domain(['1','2','3', '4','5','6'])
-    .range(['#F7CAD0', '#ff006e', '#48CAE4', '#0096C7','#023E8A','#03045E']);
+    .range(['#B9D6F2', '#92DCE5', '#49A5BB', '#006E90','#150578','#0C0F0A']);
 
   /* Tooltip-Funktion*/
   function showDetail(d) {
@@ -783,6 +861,9 @@ function moveToWhatsapp(alpha) {
                   '</span><br/>' +
         '<span class="name">Ich nutze Whatsapp: </span><span class="value">' +
                   d.whatsapp +
+                  '</span><br/>' +
+        '<span class="name">Ich vertraue Tiktok: </span><span class="value">' +
+                  d.tiktok +
                   '</span><br/>' +
                   '<span class="name">"Umfragejahr": </span><span class="value">' +
                   d.year +
